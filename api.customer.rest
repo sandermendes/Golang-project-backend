@@ -1,0 +1,35 @@
+// Get All Products
+GET http://{{host}}/v1/customers/ HTTP/1.1
+content-type: application/json
+
+###
+
+// Get Product By ID
+GET http://{{host}}/v1/customers/1 HTTP/1.1
+content-type: application/json
+
+###
+
+// Create Customer
+POST http://{{host}}/v1/customers HTTP/1.1
+content-type: application/json
+
+{
+  "firstName": "test-customer",
+  "lastName": "test-lastName",
+  "email": "email@test.com",
+  "password": "123456"
+}
+
+###
+
+// Update Product
+PUT http://{{host}}/v1/customers/1 HTTP/1.1
+content-type: application/json
+
+{
+  "firstName": "test-customer-updated",
+  "lastName": "test-lastName-updated",
+  "email": "email-updated@test.com",
+  "password": "Teste12345"
+}
