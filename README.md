@@ -7,10 +7,10 @@
 
 ## How to use
 
-[Download](https://github.com/sandermendes/test-project-backend/archive/refs/heads/master.zip) or clone the repo:
+[Download](https://github.com/sandermendes/Golang-project-backend/archive/refs/heads/master.zip) or clone the repo:
 
 ```sh
-git clone https://github.com/sandermendes/test-project-backend.git
+git clone https://github.com/sandermendes/Golang-project-backend.git
 ```
 
 Uncompress the content downloaded, access the folder extracted:
