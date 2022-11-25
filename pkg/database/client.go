@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/postgres"
 	"log"
+	"os"
 	"test-project-backend/pkg/entities"
 
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ var err error
 
 func Connect(connectionString string) {
 	// Initiate the database connection
-	Instance, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	Instance, err = gorm.Open(postgres.Open("host="+os.Getenv("DB_HOST")+" "+connectionString), &gorm.Config{})
 
 	// Check for error in connection
 	if err != nil {
@@ -26,21 +27,5 @@ func Migrate() {
 	// Create entity in database
 	Instance.AutoMigrate(&entities.Customer{})
 
-	// Insert some test rows
-	Instance.Create(&entities.Customer{
-		FirstName: "Sander",
-		LastName:  "Mendes",
-		Email:     "sandermendes@gmail.com",
-	})
-	Instance.Create(&entities.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "test@test.com",
-	})
-	Instance.Create(&entities.Customer{
-		FirstName: "Jane",
-		LastName:  "Doe",
-		Email:     "test@test.com",
-	})
 	log.Println("Database Migration Completed...")
 }

@@ -1,0 +1,49 @@
+version: '3'
+services:
+  app:
+    # Container Name
+    container_name: GoLangApp
+    # Get info to build image from Dockerfile located at the same level folder
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - 8080:8080
+    environment:
+      - DB_HOST=postgres
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    # wait for container be run
+    depends_on:
+      - postgres
+      # This service depends on postgres. Start that first.
+      # - mysql # This service depends on mysql. Start that first.
+    networks:
+      - backend
+
+  postgres:
+    # Container Name
+    container_name: PostgresData
+    # Selected image
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - DATABASE_HOST=localhost
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  api:
+  database_postgres:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:

@@ -15,9 +15,9 @@ POST http://{{host}}/v1/customers HTTP/1.1
 content-type: application/json
 
 {
-  "firstName": "test-customer",
-  "lastName": "test-lastName",
-  "email": "email@test.com",
+  "firstName": "Sander",
+  "lastName": "Mendes",
+  "email": "sandermendes@gmail.com",
   "password": "123456"
 }
 
@@ -28,8 +28,8 @@ PUT http://{{host}}/v1/customers/1 HTTP/1.1
 content-type: application/json
 
 {
-  "firstName": "test-customer-updated",
-  "lastName": "test-lastName-updated",
-  "email": "email-updated@test.com",
-  "password": "Teste12345"
+  "firstName": "Sander-updated",
+  "lastName": "Mendes-updated",
+  "email": "sandermendes-updated@gmail.com",
+  "password": "Test123456"
 }

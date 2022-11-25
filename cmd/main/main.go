@@ -27,6 +27,6 @@ func main() {
 	controllers.InitializeRoutes(router)
 
 	// Start the server
-	log.Println(fmt.Sprintf("Starting Server on port %s:%s", "http://localhost", config.AppConfig.Port))
+	log.Println(fmt.Sprintf("Starting Server on %s:%s/v1/customers", "http://localhost", config.AppConfig.Port))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", config.AppConfig.Port), router))
 }
