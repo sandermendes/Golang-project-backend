@@ -3,7 +3,6 @@ package database
 import (
 	"gorm.io/driver/postgres"
 	"log"
-	"os"
 	"test-project-backend/pkg/entities"
 
 	"gorm.io/gorm"
@@ -14,7 +13,7 @@ var err error
 
 func Connect(connectionString string) {
 	// Initiate the database connection
-	Instance, err = gorm.Open(postgres.Open("host="+os.Getenv("DB_HOST")+" "+connectionString), &gorm.Config{})
+	Instance, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
 	// Check for error in connection
 	if err != nil {

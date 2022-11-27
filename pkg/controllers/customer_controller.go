@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"gorm.io/gorm"
+	"log"
 	"net/http"
 	"test-project-backend/pkg/database"
 	"test-project-backend/pkg/entities"
@@ -10,12 +12,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const ServerFailMessage = "Internal fail"
+
 func GetCustomers(w http.ResponseWriter, _ *http.Request) {
 	// Create variable customer array
 	var customers []entities.Customer
+	var customerResponse []entities.CustomerResponse
 
 	// Return all rows
-	database.Instance.Find(&customers)
+	if err := database.Instance.Select("id, first_name, last_name, email").Find(&customers).Scan(&customerResponse).Error; err != nil {
+		panic(ServerFailMessage)
+	}
+	log.Println("GetCustomers - customerResponse", customerResponse)
 
 	// Set header to proper Type
 	w.Header().Set("Content-Type", "application/json")
@@ -24,7 +32,7 @@ func GetCustomers(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	// Return the all rows
-	json.NewEncoder(w).Encode(customers)
+	json.NewEncoder(w).Encode(customerResponse)
 }
 
 func GetCustomerById(w http.ResponseWriter, request *http.Request) {
@@ -39,15 +47,19 @@ func GetCustomerById(w http.ResponseWriter, request *http.Request) {
 
 	// Initiate customer based on entity Customer
 	var customer entities.Customer
+	var customerResponse entities.CustomerResponse
 
 	// Search for the customer
-	database.Instance.First(&customer, customerId)
+	if err := database.Instance.Select("id, first_name, last_name, email").First(&customer,
+		customerId).Scan(&customerResponse).Error; err != nil {
+		panic(ServerFailMessage)
+	}
 
 	// Set header to proper Type
 	w.Header().Set("Content-Type", "application/json")
 
 	// return the customer by id
-	json.NewEncoder(w).Encode(customer)
+	json.NewEncoder(w).Encode(customerResponse)
 }
 
 func CreateCustomer(w http.ResponseWriter, request *http.Request) {
@@ -68,10 +80,17 @@ func CreateCustomer(w http.ResponseWriter, request *http.Request) {
 	customer.Password = password
 
 	// Insert row
-	database.Instance.Create(&customer)
+	if err := database.Instance.Create(&customer).Error; err != nil {
+		panic(ServerFailMessage)
+	}
 
 	// return newly created customer
-	json.NewEncoder(w).Encode(customer)
+	json.NewEncoder(w).Encode(entities.CustomerResponse{
+		ID:        customer.ID,
+		FirstName: customer.FirstName,
+		LastName:  customer.LastName,
+		Email:     customer.Email,
+	})
 }
 
 func UpdateCustomer(w http.ResponseWriter, request *http.Request) {
@@ -88,7 +107,9 @@ func UpdateCustomer(w http.ResponseWriter, request *http.Request) {
 	var customer entities.Customer
 
 	// Search for the customer
-	database.Instance.First(&customer, customerId)
+	if err := database.Instance.First(&customer, customerId).Error; err != nil {
+		panic(ServerFailMessage)
+	}
 
 	// Assign requested parameters from body to variable
 	json.NewDecoder(request.Body).Decode(&customer)
@@ -101,13 +122,20 @@ func UpdateCustomer(w http.ResponseWriter, request *http.Request) {
 	customer.Password = password
 
 	// Update row in database
-	database.Instance.Save(&customer)
+	if err := database.Instance.Save(&customer).Error; err != nil {
+		panic(ServerFailMessage)
+	}
 
 	// Set header to proper Type
 	w.Header().Set("Content-Type", "application/json")
 
 	// return newly updated customer
-	json.NewEncoder(w).Encode(customer)
+	json.NewEncoder(w).Encode(entities.CustomerResponse{
+		ID:        customer.ID,
+		FirstName: customer.FirstName,
+		LastName:  customer.LastName,
+		Email:     customer.Email,
+	})
 }
 
 func checkIfCustomerExists(customerId string) bool {
@@ -115,7 +143,11 @@ func checkIfCustomerExists(customerId string) bool {
 	var customer entities.Customer
 
 	// Search for the customer
-	database.Instance.First(&customer, customerId)
+	if err := database.Instance.First(&customer, customerId).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			panic(ServerFailMessage)
+		}
+	}
 
 	// Check if the customer is valid
 	if customer.ID == 0 {

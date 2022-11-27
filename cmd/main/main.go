@@ -12,8 +12,7 @@ import (
 )
 
 func main() {
-
-	// Load Configurations from config.json using Viper
+	// Load Configurations
 	config.LoadAppConfiguration()
 
 	// Initialize Database

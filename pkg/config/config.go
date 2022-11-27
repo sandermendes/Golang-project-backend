@@ -1,37 +1,41 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
 	"log"
-
-	"github.com/spf13/viper"
+	"os"
 )
 
 type Config struct {
-	ConnectionString string `mapstructure:"connection_string"`
-	Port             string `mapstructure:"port"`
+	ConnectionString string
+	Port             string
 }
 
-var AppConfig *Config
+var AppConfig Config
 
-func LoadAppConfiguration() {
+func LoadAppConfiguration() Config {
 	log.Println("Loading Server Configurations...")
 
-	// Set path for configuration file
-	viper.AddConfigPath(".")
-
-	// Name file
-	viper.SetConfigName("config")
-
-	// File type
-	viper.SetConfigType("json")
-
-	// Check if config file can be loaded
-	err := viper.ReadInConfig()
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error loading .env file. Err: %s", err)
 	}
-	err = viper.Unmarshal(&AppConfig)
-	if err != nil {
-		log.Fatal(err)
+
+	var AppPort = os.Getenv("APP_LISTEN_PORT")
+	if AppPort == "" {
+		AppPort = "8080"
 	}
+
+	// Compose the connection string
+	var DbHost = "host=" + os.Getenv("DB_HOST")
+	var DbPort = "port=" + os.Getenv("DB_PORT")
+	var DbUser = "user=" + os.Getenv("DB_USER")
+	var DbPassword = "password=" + os.Getenv("DB_PASSWORD")
+	var DbName = "dbname=" + os.Getenv("DB_DBNAME")
+	var DbSslMode = "sslmode=" + os.Getenv("DB_SSLMODE")
+
+	AppConfig.ConnectionString = DbHost + " " + DbPort + " " + DbUser + " " + DbPassword + " " + DbName + " " + DbSslMode
+	AppConfig.Port = AppPort
+
+	return AppConfig
 }
