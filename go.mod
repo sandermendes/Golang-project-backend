@@ -19,6 +19,7 @@ require (
 	github.com/jackc/pgtype v1.12.0 // indirect
 	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/rs/cors v1.8.2 // indirect
 )
 
 require (

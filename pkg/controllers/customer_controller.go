@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"test-project-backend/pkg/database"
 	"test-project-backend/pkg/entities"
@@ -23,7 +22,6 @@ func GetCustomers(w http.ResponseWriter, _ *http.Request) {
 	if err := database.Instance.Select("id, first_name, last_name, email").Find(&customers).Scan(&customerResponse).Error; err != nil {
 		panic(ServerFailMessage)
 	}
-	log.Println("GetCustomers - customerResponse", customerResponse)
 
 	// Set header to proper Type
 	w.Header().Set("Content-Type", "application/json")
@@ -136,6 +134,31 @@ func UpdateCustomer(w http.ResponseWriter, request *http.Request) {
 		LastName:  customer.LastName,
 		Email:     customer.Email,
 	})
+}
+
+func DeleteCustomer(w http.ResponseWriter, request *http.Request) {
+	// Get customer id from request
+	customerId := mux.Vars(request)["id"]
+
+	// Check if customer exists
+	if checkIfCustomerExists(customerId) == false {
+		json.NewEncoder(w).Encode("Customer Not Found!")
+		return
+	}
+
+	// Initiate customer based on entity Customer
+	var customer entities.Customer
+
+	// Update row in database
+	if err := database.Instance.Delete(&customer, customerId).Error; err != nil {
+		panic(ServerFailMessage)
+	}
+
+	// Set header to proper Type
+	w.Header().Set("Content-Type", "application/json")
+
+	// return newly updated customer
+	json.NewEncoder(w).Encode("Customer deleted")
 }
 
 func checkIfCustomerExists(customerId string) bool {

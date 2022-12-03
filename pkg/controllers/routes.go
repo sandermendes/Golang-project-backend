@@ -11,4 +11,5 @@ func InitializeRoutes(router *mux.Router) {
 	router.HandleFunc(customersUrlPath+"/{id}", GetCustomerById).Methods("GET")
 	router.HandleFunc(customersUrlPath, CreateCustomer).Methods("POST")
 	router.HandleFunc(customersUrlPath+"/{id}", UpdateCustomer).Methods("PUT")
+	router.HandleFunc(customersUrlPath+"/{id}", DeleteCustomer).Methods("DELETE")
 }
