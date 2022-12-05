@@ -27,9 +27,9 @@ func main() {
 	controllers.InitializeRoutes(router)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
-		AllowCredentials: true,
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowCredentials: true,
 	})
 	handler := c.Handler(router)
 
